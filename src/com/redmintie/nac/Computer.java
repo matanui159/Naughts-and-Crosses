@@ -3,8 +3,10 @@ package com.redmintie.nac;
 import java.util.Arrays;
 
 public class Computer extends Player {
-	public Computer(String name, int piece) {
+	private boolean debug;
+	public Computer(String name, int piece, boolean debug) {
 		super(name, piece);
+		this.debug = debug;
 	}
 	@Override
 	public String getName() {
@@ -12,13 +14,13 @@ public class Computer extends Player {
 	}
 	@Override
 	public int chooseSquare(int[] grid) {
-		boolean[] squares = chooseSquares(grid, piece);
+		boolean[] squares = chooseSquares(grid, piece, debug);
 		int square = -1;
 		int score = 0;
 		for (int i = 0; i < 9; i++) {
 			if (squares[i]) {
-				int s = getScore(grid, i, piece, (int)Math.pow(2,  10));
-				if (Game.DEBUG) {
+				int s = getScore(grid, i, piece);
+				if (debug) {
 					System.out.println("[DEBUG] SCORE OF " + (i + 1) + " IS " + s);
 				}
 				if (square == -1 || s > score) {
@@ -33,17 +35,14 @@ public class Computer extends Player {
 		System.out.println(getName() + " placed a " + getPiece() + " at square " + (square + 1) + ".");
 		return square;
 	}
-	private int getScore(int[] grid, int square, int piece, int time) {
-		if (time > 1) {
-			time /= 2;
-		}
+	private int getScore(int[] grid, int square, int piece) {
 		int score = 0;
 		grid[square] = piece;
 		if (Game.getWinner(grid) != null) {
 			if (piece == this.piece) {
-				score += time;
+				score++;
 			} else {
-				score -= time;
+				score--;
 			}
 		} else if (!Game.isTied(grid)) {
 			if (piece == 1) {
@@ -51,17 +50,17 @@ public class Computer extends Player {
 			} else {
 				piece = 1;
 			}
-			boolean[] squares = chooseSquares(grid, piece);
+			boolean[] squares = chooseSquares(grid, piece, false);
 			for (int i = 0; i < 9; i++) {
 				if (squares[i]) {
-					score += getScore(grid, i, piece, time);
+					score += getScore(grid, i, piece);
 				}
 			}
 		}
 		grid[square] = 0;
 		return score;
 	}
-	private boolean[] chooseSquares(int[] grid, int piece) {
+	private boolean[] chooseSquares(int[] grid, int piece, boolean debug) {
 		boolean[] squares = new boolean[9];
 		Arrays.fill(squares, false);
 		boolean found = false;
@@ -88,6 +87,9 @@ public class Computer extends Player {
 			}
 		}
 		if (found) {
+			if (debug) {
+				System.out.println("[DEBUG] FOUND INSTANT WIN");
+			}
 			return squares;
 		}
 		
@@ -113,6 +115,21 @@ public class Computer extends Player {
 			}
 		}
 		if (found) {
+			if (debug) {
+				System.out.println("[DEBUG] FOUND INSTANT LOSS");
+			}
+			return squares;
+		}
+		
+//		Takes center spot
+		if (grid[4] == 0) {
+			squares[4] = true;
+			found = true;
+		}
+		if (found) {
+			if (debug) {
+				System.out.println("[DEBUG] FOUND CENTER SPOT");
+			}
 			return squares;
 		}
 		
@@ -138,6 +155,9 @@ public class Computer extends Player {
 			}
 		}
 		if (found) {
+			if (debug) {
+				System.out.println("[DEBUG] FOUND POSSIBLE ADVANCES");
+			}
 			return squares;
 		}
 		
@@ -146,6 +166,9 @@ public class Computer extends Player {
 			if (grid[i] == 0) {
 				squares[i] = true;
 			}
+		}
+		if (debug) {
+			System.out.println("[DEBUG] FOUND ALL POSSIBLE SQUARES");
 		}
 		return squares;
 	}
