@@ -46,6 +46,7 @@ public class Game {
 				1, 0, 0
 		}
 	};
+	public static final boolean DEBUG = true;
 	private static Player p1;
 	private static Player p2;
 	private static final int[] CLONE = new int[9];

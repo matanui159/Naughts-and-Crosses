@@ -17,7 +17,10 @@ public class Computer extends Player {
 		int score = 0;
 		for (int i = 0; i < 9; i++) {
 			if (squares[i]) {
-				int s = getScore(grid, i, piece, 10);
+				int s = getScore(grid, i, piece, (int)Math.pow(2,  10));
+				if (Game.DEBUG) {
+					System.out.println("[DEBUG] SCORE OF " + (i + 1) + " IS " + s);
+				}
 				if (square == -1 || s > score) {
 					square = i;
 					score = s;
@@ -32,7 +35,7 @@ public class Computer extends Player {
 	}
 	private int getScore(int[] grid, int square, int piece, int time) {
 		if (time > 1) {
-			time--;
+			time /= 2;
 		}
 		int score = 0;
 		grid[square] = piece;
