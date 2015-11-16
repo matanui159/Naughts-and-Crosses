@@ -83,12 +83,13 @@ public class Game {
 		}
 	}
 	public static void displayGrid(int[] grid) {
+		String dash = "\u2014\u2014\u2014";
 		boolean first = true;
 		for (int i = 0; i < 9; i++) {
 			if (i % 3 == 0) {
 				if (!first) {
 					System.out.println();
-					System.out.println("---+---+---");
+					System.out.println(dash + '+' + dash + '+' + dash);
 				}
 				first = false;
 				System.out.print(" ");
